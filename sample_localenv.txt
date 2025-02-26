@@ -2,4 +2,4 @@ GROQ_API_KEY=gsk_xxxx
 GoogleSerpAPI_KEY=
 FIRECRAWL_API_KEY=
 OPENAI_API_KEY=
-gmaps_api_key=s
+gmaps_api_key=

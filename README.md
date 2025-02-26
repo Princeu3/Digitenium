@@ -13,4 +13,22 @@ To install the dependencies, run the following command:
 pip install -r requirements.txt
 ```
 
+Create a .env file and add the following variables:
+
+```bash
+GROQ_API_KEY=gsk_xxxx
+GoogleSerpAPI_KEY=
+OPENAI_API_KEY=
+gmaps_api_key=
+```
+
+To run the streamlit app, run the following command:
+
+```bash
+streamlit run Events.py
+```
+
+
+
+
 
