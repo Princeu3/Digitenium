@@ -1,6 +1,7 @@
 import streamlit as st
 import asyncio
 import os
+import pandas as pd
 from dotenv import load_dotenv
 from EventsNearby.find_nearby_events import extract_city_from_address, scrape_luma_events, scrape_EB_events, find_nearby_events
 import requests
@@ -8,6 +9,8 @@ import requests
 # Initialize session state for address suggestions
 if 'address_suggestions' not in st.session_state:
     st.session_state.address_suggestions = []
+if 'selected_address' not in st.session_state:
+    st.session_state.selected_address = ""
 
 def get_place_suggestions(input_text, api_key):
     """Get address suggestions from Google Places API"""
@@ -22,6 +25,44 @@ def get_place_suggestions(input_text, api_key):
         predictions = response.json().get("predictions", [])
         return [pred["description"] for pred in predictions]
     return []
+
+def remove_duplicates_from_csv(file_path):
+    """Remove duplicate entries from CSV files based on event name and URL"""
+    if not os.path.exists(file_path):
+        return False
+    
+    try:
+        # Read the CSV file
+        df = pd.read_csv(file_path)
+        
+        # Check if the dataframe is empty
+        if df.empty:
+            return False
+            
+        # Count rows before deduplication
+        rows_before = len(df)
+        
+        # Remove duplicates based on name and URL (if these columns exist)
+        dedup_columns = []
+        if 'name' in df.columns:
+            dedup_columns.append('name')
+            
+        if dedup_columns:
+            df = df.drop_duplicates(subset=dedup_columns)
+        else:
+            # If neither column exists, drop complete duplicates
+            df = df.drop_duplicates()
+            
+        # Count rows after deduplication
+        rows_after = len(df)
+        
+        # Save the cleaned dataframe back to the CSV
+        df.to_csv(file_path, index=False)
+        
+        return rows_before - rows_after  # Return number of duplicates removed
+    except Exception as e:
+        st.warning(f"Error cleaning {file_path}: {str(e)}")
+        return False
 
 # Page config
 st.set_page_config(
@@ -42,20 +83,24 @@ gmaps_api_key = os.getenv('gmaps_api_key')
 address_input = st.text_input(
     "Enter an address:",
     placeholder="Start typing an address...",
-    key="address_input"
+    key="address_input",
+    on_change=None
 )
 
-# Add address autocomplete
+# Update suggestions when address input changes
 if address_input:
-    suggestions = get_place_suggestions(address_input, gmaps_api_key)
-    if suggestions:
-        selected_address = st.selectbox(
-            "Select from suggested addresses:",
-            suggestions,
-            key="address_selector"
-        )
-        if selected_address:
-            address = selected_address
+    st.session_state.address_suggestions = get_place_suggestions(address_input, gmaps_api_key)
+
+# Display dropdown for address suggestions
+address = address_input  # Default to what user typed
+if st.session_state.address_suggestions:
+    selected_address = st.selectbox(
+        "Select an address:",
+        options=st.session_state.address_suggestions,
+        key="address_dropdown"
+    )
+    if selected_address:
+        address = selected_address
 
 max_pages = st.slider("Number of Eventbrite pages to scrape:", min_value=1, max_value=10, value=1)
 
@@ -92,22 +137,44 @@ if st.button("Find Events"):
             status_container.info("Scraping events data...")
             # Run async operations
             async def run_scraping():
+                luma_success = False
+                
+                # Try to scrape Luma events first
                 try:
+                    status_container.info("Scraping Luma events...")
                     await scrape_luma_events(city)
                     progress_bar.progress(50, text="Scraped Luma events...")
+                    luma_success = True
+                except Exception as e:
+                    st.warning(f"Luma events not available for {city}. Reason: {str(e)}")
+                    progress_bar.progress(50, text="Luma events not available, trying Eventbrite...")
+                
+                # Always try to scrape Eventbrite events
+                try:
                     status_container.info("Scraping Eventbrite events...")
-                    
                     await scrape_EB_events(city=city, max_pages=max_pages)
                     progress_bar.progress(100, text="Finished scraping events!")
                 except Exception as e:
-                    st.error(f"Error during scraping: {str(e)}")
-                    return False
+                    if not luma_success:
+                        st.error(f"Error: Could not retrieve events from either Luma or Eventbrite. {str(e)}")
+                        return False
+                    else:
+                        st.warning(f"Eventbrite scraping failed, but Luma events were retrieved. {str(e)}")
+                
                 return True
             
             if not asyncio.run(run_scraping()):
                 st.stop()
         else:
             status_container.info("Using existing event data files...")
+            
+        # Clean CSV files to remove duplicates
+        with st.spinner("Cleaning event data..."):
+            luma_dupes = remove_duplicates_from_csv(luma_file) if os.path.exists(luma_file) else 0
+            eb_dupes = remove_duplicates_from_csv(eb_file) if os.path.exists(eb_file) else 0
+            
+            if luma_dupes or eb_dupes:
+                st.info(f"Removed {luma_dupes} duplicate Luma events and {eb_dupes} duplicate Eventbrite events.")
             
         # Find and display nearby events
         with st.spinner("Calculating distances to nearby events..."):

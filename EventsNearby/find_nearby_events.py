@@ -34,7 +34,7 @@ def extract_city_from_address(address: str) -> str:
                 "content": prompt,
             }
         ],
-        model="llama-3.1-8b-instant",
+        model="llama-3.3-70b-versatile",
     )
 
     city = chat_completion.choices[0].message.content.strip()
@@ -58,7 +58,7 @@ async def scrape_luma_events(city: str):
     print(f"\nStarting event scraping for {city}...")
     await crawl_luma_venues(city)
 
-def find_nearby_events(reference_address: str, api_key: str, max_distance: float = 10) -> tuple[list, int]:
+def find_nearby_events(reference_address: str, api_key: str, max_distance: float = 20) -> tuple[list, int]:
     """
     Find events near a reference address from both CSV files
     
