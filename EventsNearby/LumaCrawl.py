@@ -47,18 +47,18 @@ def save_venues_to_csv(venues: list, filename: str):
         writer.writerows(venues)
     print(f"Saved {len(venues)} venues to '{filename}'.")
 
-def is_duplicate_venue(venue_url: str, seen_urls: set) -> bool:
+def is_duplicate_venue(venue_name: str, seen_names: set) -> bool:
     """
-    Check if a venue URL has already been processed.
+    Check if a venue name has already been processed.
     
     Args:
-        venue_url (str): The URL of the venue to check
-        seen_urls (set): Set of previously processed URLs
+        venue_name (str): The name of the venue to check
+        seen_names (set): Set of previously processed names
     
     Returns:
-        bool: True if the URL has been seen before, False otherwise
+        bool: True if the name has been seen before, False otherwise
     """
-    return venue_url in seen_urls
+    return venue_name in seen_names
 
 
 def is_complete_venue(venue: dict, required_keys: list) -> bool:
@@ -158,6 +158,9 @@ async def fetch_and_process_page(
     """
 
     print(f"Processing venues from {base_url}...")
+    
+    # Add a set to track seen venue names
+    seen_names = set()
 
     # Custom JavaScript to scroll down and wait for new content to load
     scroll_js = """
@@ -218,9 +221,12 @@ async def fetch_and_process_page(
             print("Skipping venue with empty name")
             continue
 
-        if is_duplicate_venue(venue["href"], seen_urls):
-            print(f"Duplicate venue URL '{venue['href']}' found. Skipping.")
+        if is_duplicate_venue(venue["name"], seen_names):
+            print(f"Duplicate venue name '{venue['name']}' found. Skipping.")
             continue
+
+        # Add the venue name to seen_names after checking
+        seen_names.add(venue["name"])
 
         # Map href to url
         venue["url"] = venue.pop("href")
