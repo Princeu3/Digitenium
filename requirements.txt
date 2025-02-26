@@ -63,3 +63,8 @@ url-normalize==1.4.3
 urllib3==1.26.20
 us==2.0.2
 yfinance==0.2.53
+Crawl4AI==0.4.247
+python-dotenv==1.0.1
+pydantic==2.10.6
+geopy==2.4.1
+streamlit==1.32.2
