@@ -6,6 +6,8 @@ from .LumaCrawl import crawl_venues as crawl_luma_venues
 from .EventBriteCrawl import crawl_venues as crawl_eventbrite_venues
 from .distance_calculator import get_lat_lng, calculate_distances
 import pandas as pd
+import streamlit as st
+from pathlib import Path
 
 def extract_city_from_address(address: str) -> str:
     """
@@ -17,7 +19,11 @@ def extract_city_from_address(address: str) -> str:
     Returns:
         str: Extracted city name
     """
-    load_dotenv()
+
+    root_dir = Path(__file__).parent.parent
+    env_path = root_dir / '.env'
+
+    load_dotenv(env_path, override=True)
     client = Groq(api_key=os.getenv('GROQ_API_KEY'))
     
     prompt = f"""Given the address "{address}", respond with ONLY the city name.
@@ -40,6 +46,7 @@ def extract_city_from_address(address: str) -> str:
     city = chat_completion.choices[0].message.content.strip()
     return city
 
+
 async def scrape_EB_events(city: str, max_pages: int = 1):
     """
     Scrape events from Eventbrite for the given city
@@ -51,12 +58,14 @@ async def scrape_EB_events(city: str, max_pages: int = 1):
     print("\nScraping Eventbrite events...")
     await crawl_eventbrite_venues(city=city, max_pages=max_pages)
 
+
 async def scrape_luma_events(city: str):
     """
     Scrape events from Luma for the given city
     """
     print(f"\nStarting event scraping for {city}...")
     await crawl_luma_venues(city)
+
 
 def find_nearby_events(reference_address: str, api_key: str, max_distance: float = 20) -> tuple[list, int]:
     """
@@ -65,7 +74,7 @@ def find_nearby_events(reference_address: str, api_key: str, max_distance: float
     Args:
         reference_address (str): The address to find events near
         api_key (str): Google Maps API key
-        max_distance (float): Maximum distance in miles (default: 10)
+        max_distance (float): Maximum distance in miles (default: 20)
         
     Returns:
         tuple: (List of nearby events, Total number of locations compared)

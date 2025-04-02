@@ -75,7 +75,7 @@ def get_browser_config() -> BrowserConfig:
     return BrowserConfig(
         browser_type="chromium",  # Type of browser to simulate
         headless=False,  # Whether to run in headless mode (no GUI)
-        verbose=True,  # Enable verbose logging
+        verbose=True,  # Enable verbose logging (False = No Logs)
     )
 
 
@@ -122,7 +122,7 @@ async def fetch_event_details(
     Fetches detailed information from an individual event page.
     """
     # Clean the URL by removing any </ > characters
-    cleaned_url = event_url.replace('</','').replace('>','')
+    cleaned_url = event_url.replace('<','').replace('>','')
     print(f"Fetching details for: {cleaned_url}")
     
     result = await crawler.arun(
