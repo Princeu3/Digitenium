@@ -64,6 +64,8 @@ Run the Streamlit app with:
 streamlit run Events.py
 ```
 
+### Remove files from Output for new scrapes! 
+
 This will launch the web interface in your default browser where you can search for events.
 
 ## Project Structure
