@@ -63,7 +63,7 @@ def get_browser_config() -> BrowserConfig:
     # https://docs.crawl4ai.com/core/browser-crawler-config/
     return BrowserConfig(
         browser_type="chromium",  # Type of browser to simulate
-        headless=False,  # Whether to run in headless mode (no GUI)
+        headless=True,  # Whether to run in headless mode (no GUI)
         verbose=True,  # Enable verbose logging
     )
 
@@ -251,7 +251,7 @@ async def crawl_venues(city: str, max_pages: int = 10):
 
     # Save the collected venues to a CSV file with city name
     if all_venues:
-        filename = f"{city.lower()}_EB.csv"
+        filename = f"output/{city.lower()}_EB.csv"
         save_venues_to_csv(all_venues, filename)
         print(f"Saved {len(all_venues)} venues to '{filename}'.")
     else:

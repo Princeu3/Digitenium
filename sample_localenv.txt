@@ -1,5 +1,6 @@
-GROQ_API_KEY=gsk_xxxx
-GoogleSerpAPI_KEY=
-FIRECRAWL_API_KEY=
-OPENAI_API_KEY=
-gmaps_api_key=
+# API Keys - Replace with your actual keys
+GROQ_API_KEY=your_groq_api_key_here
+GoogleSerpAPI_KEY=your_serp_api_key_here
+FIRECRAWL_API_KEY=your_firecrawl_api_key_here  # Optional
+OPENAI_API_KEY=your_openai_api_key_here  # Optional
+gmaps_api_key=your_gmaps_api_key_here  # Optional

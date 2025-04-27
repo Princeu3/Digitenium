@@ -91,7 +91,7 @@ def find_nearby_events(reference_address: str, api_key: str, max_distance: float
     total_comparisons = 0
     
     # Process Luma events
-    luma_file = f"{city}_luma.csv"
+    luma_file = f"output/{city}_luma.csv"
     if os.path.exists(luma_file):
         luma_df = pd.read_csv(luma_file)
         luma_df['source'] = 'Luma'
@@ -102,7 +102,7 @@ def find_nearby_events(reference_address: str, api_key: str, max_distance: float
         print(f"Warning: Luma events file {luma_file} not found")
     
     # Process Eventbrite events
-    eb_file = f"{city}_EB.csv"
+    eb_file = f"output/{city}_EB.csv"
     if os.path.exists(eb_file):
         eb_df = pd.read_csv(eb_file)
         eb_df['source'] = 'Eventbrite'
@@ -144,8 +144,8 @@ async def main():
     print(f"Detected city: {city}")
     
     # Check if CSV files already exist
-    luma_file = f"{city.lower()}_luma.csv"
-    eb_file = f"{city.lower()}_EB.csv"
+    luma_file = f"output/{city.lower()}_luma.csv"
+    eb_file = f"output/{city.lower()}_EB.csv"
     
     if not os.path.exists(luma_file) or not os.path.exists(eb_file):
         print("\nScraping events data...")

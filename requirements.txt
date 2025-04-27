@@ -1,8 +1,8 @@
 aiohttp==3.9.3
 beautifulsoup4==4.13.3
-Crawl4AI==0.4.247
+Crawl4AI
 geopy==2.4.1
-groq==0.18.0
+groq
 httpx==0.28.1
 lxml==5.3.1
 pandas==2.2.3
@@ -10,5 +10,5 @@ pydantic==2.10.6
 python-dotenv==1.0.1
 requests==2.32.3
 selenium==4.18.1
-streamlit==1.32.2
-playwright>=1.41.0
+streamlit
+playwright

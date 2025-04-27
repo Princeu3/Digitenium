@@ -12,6 +12,8 @@ if 'address_suggestions' not in st.session_state:
 if 'selected_address' not in st.session_state:
     st.session_state.selected_address = ""
 
+os.makedirs('output', exist_ok=True)
+
 def get_place_suggestions(input_text, api_key):
     """Get address suggestions from Google Places API"""
     url = "https://maps.googleapis.com/maps/api/place/autocomplete/json"
@@ -126,8 +128,8 @@ if st.button("Find Events"):
                 st.stop()
         
         # Check if CSV files already exist
-        luma_file = f"{city.lower()}_luma.csv"
-        eb_file = f"{city.lower()}_EB.csv"
+        luma_file = f"output/{city.lower()}_luma.csv"
+        eb_file = f"output/{city.lower()}_EB.csv"
         
         # Create progress bar
         progress_text = "Operation in progress. Please wait."
