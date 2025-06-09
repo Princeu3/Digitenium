@@ -1,5 +1,0 @@
-# API Keys - Replace with your actual keys
-GROQ_API_KEY=your_groq_api_key_here
-GoogleSerpAPI_KEY=your_serp_api_key_here
-OPENAI_API_KEY=your_openai_api_key_here 
-gmaps_api_key=your_gmaps_api_key_here

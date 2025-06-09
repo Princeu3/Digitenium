@@ -1,6 +1,6 @@
-aiohttp==3.9.3
+aiohttp>=3.9.0
 beautifulsoup4==4.13.3
-Crawl4AI
+crawl4ai>=0.4.247
 geopy==2.4.1
 groq
 httpx==0.28.1

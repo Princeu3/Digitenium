@@ -15,6 +15,7 @@ from crawl4ai import (
     CacheMode,
     CrawlerRunConfig,
     LLMExtractionStrategy,
+    LLMConfig,
 )
 
 CSS_SELECTOR = "[class*='main-content-wrapper zm-container']"
@@ -103,8 +104,10 @@ def get_llm_strategy(is_detail_page: bool = False) -> LLMExtractionStrategy:
     )
     
     return LLMExtractionStrategy(
-        provider="openai/gpt-3.5-turbo",
-        api_token=os.getenv("OPENAI_API_KEY"),
+        llm_config=LLMConfig(
+            provider="openai/gpt-3.5-turbo",
+            api_token=os.getenv("OPENAI_API_KEY"),
+        ),
         schema=list_schema if not is_detail_page else Venue.model_json_schema(),
         extraction_type="schema",
         instruction=instruction,
