@@ -87,8 +87,8 @@ def get_llm_strategy(is_detail_page: bool = False) -> LLMExtractionStrategy:
     
     return LLMExtractionStrategy(
         llm_config=LLMConfig(
-            provider="openai/gpt-3.5-turbo",
-            api_token=os.getenv("OPENAI_API_KEY"),
+        provider="openai/gpt-3.5-turbo",
+        api_token=os.getenv("OPENAI_API_KEY"),
         ),
         schema=Venue.model_json_schema(),
         extraction_type="schema",
